@@ -8,6 +8,6 @@ import com.yuhang.stock.dbservice.model.Quote;
 
 public interface QuotesRepository extends JpaRepository<Quote, Integer>{
 
-	List<Quote> findByUserName(String username);
-
+	List<Quote> findByUserName(String username);	
+	
 }

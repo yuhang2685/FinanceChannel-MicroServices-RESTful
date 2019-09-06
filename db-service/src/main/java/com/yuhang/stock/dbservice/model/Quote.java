@@ -20,11 +20,16 @@ public class Quote {
 	private String userName;
 	
 	@Column(name = "quote")
-	private String quote;
-
+	private String quote;	
 	
-	
-	public Quote() {}
+	public Quote() {}	
+		
+	// Why without id?
+	// id will be auto created.
+	public Quote(String userName, String quote) {
+		this.userName = userName;
+		this.quote = quote;
+	}
 
 	public Integer getId() {
 		return id;
