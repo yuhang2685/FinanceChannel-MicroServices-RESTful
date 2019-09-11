@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.yuhang.stock.stockservice.models.Quote;
+import com.yuhang.stock.stockservice.models.StockCurrentPrice;
 
 @RestController
 @RequestMapping("/rest/stock")
@@ -26,8 +27,9 @@ public class StockResource {
 	
 	// Query db-service to obtain a list of Strings by getting a HTTP-GET response.	
 	@GetMapping("/{username}")
-	public List<Quote> getStock(@PathVariable("username") final String userName){
-
+	//public List<Quote> getStock(@PathVariable("username") final String userName){
+	public List<StockCurrentPrice> getStock(@PathVariable("username") final String userName){
+		
 		// First we visit db-service by username to get a list of Strings.
 		// Then we use each String to query YahooFinance to obtain a Stock object.
 		
@@ -40,8 +42,11 @@ public class StockResource {
 		return symbols.stream()
 	      		.map(symbol -> 
 	    	  	{
-	    	  		Quote qut = restTemplate.getForObject("http://stock-data-service/rest/datasource/stock/" + symbol, Quote.class);
-	    	  		return new Quote(qut.getSymbol(), qut.getPrice());
+	    	  		// alpha-vantage-API-client
+	    	  		//Quote qut = restTemplate.getForObject("http://stock-data-service/rest/datasource/stock/" + symbol, Quote.class);
+	    	  		StockCurrentPrice qut = restTemplate.getForObject("http://alpha-vantage-API-client/stockQuotes/" + symbol, StockCurrentPrice.class);
+	    	  		//return new StockCurrentPrice(qut.getSymbol(), qut.getPrice());
+	    	  		return qut;
 	    	  	}
 	          )
           .collect(Collectors.toList());	

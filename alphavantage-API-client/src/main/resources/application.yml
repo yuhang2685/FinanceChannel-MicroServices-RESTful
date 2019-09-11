@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: alpha-vantage-API-client
+    
+server:
+  port: 8305  
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
