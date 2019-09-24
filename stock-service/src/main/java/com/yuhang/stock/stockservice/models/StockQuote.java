@@ -2,6 +2,7 @@ package com.yuhang.stock.stockservice.models;
 
 public class StockQuote {
 
+	private int id;
 	private String symbol;
 	private double price;
 	private double open;
@@ -15,8 +16,8 @@ public class StockQuote {
 	}
 	
 	
-	public StockQuote(String symbol, double price, double open, double high, double low, int volumn, double change) {
-		
+	public StockQuote(int id, String symbol, double price, double open, double high, double low, int volumn, double change) {
+		this.id = id;
 		this.symbol = symbol;
 		this.price = price;
 		this.open = open;
@@ -27,6 +28,12 @@ public class StockQuote {
 	}
 
 
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getSymbol() {
 		return symbol;
 	}

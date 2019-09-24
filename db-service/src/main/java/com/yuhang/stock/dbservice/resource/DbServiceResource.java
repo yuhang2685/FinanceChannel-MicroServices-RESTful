@@ -3,6 +3,7 @@ package com.yuhang.stock.dbservice.resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,22 +22,23 @@ public class DbServiceResource {
 	private QuotesRepository quotesRepository;
 	
 	// Constructor needed for handling NullPointException?
-	// Dependency Injection?
+	// Dependency Injection.
 	public DbServiceResource(QuotesRepository quotesRepository) {
 		this.quotesRepository = quotesRepository;
 	}
 	
-	// Input user name to return a list of Strings.
+	// This service returns a list of stock symbols by user name.
 	@GetMapping("/{username}")	
 	public List<String> getQuotes(@PathVariable("username") final String username){
 		
 		return getQuotesByUserName(username);
 	}
 	
-	// Input is a Quotes object which has a username and a list of Strings.
-	// For each String, it constructs a Quote object using username and the String
+	
+	// Input is a Quotes object which is comprised of a username and a list of symbols.
+	// For each symbol, it constructs a Quote object using username and the symbol,
 	// and then save each above constructed Quote object in DB.
-	// Then it returns the list of Strings for the specified user.
+	// Then it returns the list of symbols for the specified user.
     @PostMapping("/add")
     public List<String> add(@RequestBody final Quotes quotes) {
 
@@ -48,19 +50,19 @@ public class DbServiceResource {
     }
 
 
+    // First, JPA gets from DB the list of Quote objects where each one has its field username matched with the given username.
+    // Then, JPA deletes every Quote object in the list from DB.
+    // Finally, it should return the list of (expected to be empty) Quote objects having username matched with the given username.
     @PostMapping("/delete/{username}")
     public List<String> delete(@PathVariable("username") final String username) {
 
-        List<Quote> quotes = quotesRepository.findByUserName(username);
-        
-        quotes.stream().forEach(quote -> quotesRepository.delete(quote));
-                
+        List<Quote> quotes = quotesRepository.findByUserName(username);        
+        quotes.stream().forEach(quote -> quotesRepository.delete(quote));               
         return getQuotesByUserName(username);
-    }	
-	
+    }		
 
-    // From db, JPA gets the list of Quote objects where each one has username matched with the given username.
-    // It returns a list of Strings constructed by putting together the Strings in Quote objects.
+    // First, JPA gets from DB the list of Quote objects where each one has its field username matched with the given username.
+    // Then, it returns a list of symbols by putting together the symbol field of each Quote object.
     private List<String> getQuotesByUserName(@PathVariable("username") String username) {
         return quotesRepository.findByUserName(username)
         		.stream()
@@ -70,14 +72,23 @@ public class DbServiceResource {
 				})
 				.collect(Collectors.toList());
     }
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
+    
+    // First, JPA gets from DB the list of Quote objects where each one has the specified username and symbol.
+    // Then, JPA deletes every Quote object in the list from DB.
+    // Finally, it returns the list of (expected to be empty) Quote objects having the specific username and symbol.
+    @DeleteMapping("/{username}/{symbol}")
+    public List<Quote> deleteSymbol(@PathVariable("username") String username, @PathVariable("symbol") String symbol) {
+
+        List<Quote> quotes = getQuoteByUserNameAndSymbol(username, symbol);        
+        quotes.stream().forEach(quote -> quotesRepository.delete(quote));                
+        return getQuoteByUserNameAndSymbol(username, symbol);
+    }	
+    
+    // Obtain the list of records where each has the specific username and symbol.
+    //@GetMapping("/{username}/{symbol}")	
+    public List<Quote> getQuoteByUserNameAndSymbol (String username, String symbol) {
+		return quotesRepository.findByUserNameAndSymbol(username, symbol);
+	}
+	
 }
