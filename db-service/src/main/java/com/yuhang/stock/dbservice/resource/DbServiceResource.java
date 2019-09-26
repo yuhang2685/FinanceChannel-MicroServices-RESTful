@@ -47,12 +47,11 @@ public class DbServiceResource {
 	 *  
 	 */
     @PostMapping("/add")
-    public List<String> add(@RequestBody final Quotes quotes) {
+    public void add(@RequestBody final Quotes quotes) {
         quotes.getQuotes()
                 .stream()
                 .map(quote -> new Quote(quotes.getUserName(), quote))
                 .forEach(quote -> quotesRepository.save(quote));
-        return getUserSymbols(quotes.getUserName());
     }
 
 
