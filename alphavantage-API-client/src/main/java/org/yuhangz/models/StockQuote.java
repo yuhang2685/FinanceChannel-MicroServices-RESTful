@@ -1,4 +1,4 @@
-package com.yuhang.stock.stockservice.models;
+package org.yuhangz.models;
 
 public class StockQuote {
 

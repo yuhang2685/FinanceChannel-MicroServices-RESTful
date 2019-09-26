@@ -27,39 +27,11 @@ import com.yuhang.stock.stockservice.models.StockQuote;
 @RequestMapping("/rest/stock")
 public class StockResource {
 	
-	// Note that we use |RestTemplate object| which is the Spring REST Client for communication with external RESTful APIs.
+	// Note that we use |RestTemplate object| which is the Spring REST Client 
+	// for communication with external RESTful APIs.
 	// For more details see https://www.baeldung.com/rest-template
 	@Autowired
 	RestTemplate restTemplate;
-	
-	// It works from Alpha Vantage!
-	// Query db-service to obtain a list of Strings by getting a HTTP-GET response.	
-	//@GetMapping("/{username}")
-	//public List<Quote> getStock(@PathVariable("username") final String userName){
-	public List<StockCurrentPrice> getStock(@PathVariable("username") final String userName){
-		
-		// First we visit db-service by username to get a list of Strings.
-		// Then we use each String to query YahooFinance to obtain a Stock object.
-		
-		// Can we use simpler ways? like a wrapper object in movie-rating project?
-		ResponseEntity<List<String>> quoteResponse = restTemplate.exchange("http://db-service/rest/db/" + userName, HttpMethod.GET, 
-			null, new ParameterizedTypeReference<List<String>>() {});			
-		// From quoteResponse we obtain a list of Strings
-		List<String> symbols = quoteResponse.getBody();
-		
-		return symbols.stream()
-	      		.map(symbol -> 
-	    	  	{
-	    	  		// alpha-vantage-API-client
-	    	  		//Quote qut = restTemplate.getForObject("http://stock-data-service/rest/datasource/stock/" + symbol, Quote.class);
-	    	  		StockCurrentPrice qut = restTemplate.getForObject("http://alpha-vantage-API-client/stockQuotes/" + symbol, StockCurrentPrice.class);
-	    	  		//return new StockCurrentPrice(qut.getSymbol(), qut.getPrice());
-	    	  		return qut;
-	    	  	}
-	          )
-          .collect(Collectors.toList());	
-		
-	}	
 	
 	 
 	/******************************************************************
@@ -75,7 +47,29 @@ public class StockResource {
 	 * @param userName
 	 * @return List<StockQuote> All real-time stock quotes in the user watch-list.
 	 * 
-	 */
+	 */	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping("/{username}")
+	public List<StockQuote> getStock(@PathVariable("username") final String userName){
+		
+		// From db-service we obtain the list of stock symbols for the user.	
+		ResponseEntity<List<String>> quoteResponse = restTemplate.exchange("http://db-service/rest/db/" + userName, 
+											HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {});			
+		List<String> symbols = quoteResponse.getBody();
+		
+		// Then we use each symbol to query AlphaVantage to obtain a StockQuote object.
+		String stockServiceBaseUrl = "http://alpha-vantage-API-client/stockQuotes/";
+		return symbols.stream()
+	      		.map(symbol -> 
+	    	  		{
+	    	  			StockQuote qut = restTemplate.getForObject(stockServiceBaseUrl + symbol, StockQuote.class);
+	    	  			return qut;
+	    	  		}
+	      			)
+	      		.collect(Collectors.toList());		
+	}	
+	
+	/*
 	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/{username}")
 	public List<StockQuote> getUserStockQuotes(@PathVariable("username") final String userName){
@@ -91,6 +85,7 @@ public class StockResource {
 		rst.add(s4);
 		return rst;
 	}
+	*/
 	
 	
 	/**
