@@ -1,36 +1,41 @@
 package com.yuhang.stock.stockservice.models;
 
-import java.math.BigDecimal;
-
 public class Quote {
+
+	private Integer id;
+	private String userName;	
+	private String quote;	
 	
-	private String symbol;
-	private BigDecimal price;
-		
-	
-	public Quote() {}
-	
-	
-	public Quote(String symbol, BigDecimal price) {		
-		this.symbol = symbol;
-		this.price = price;
+	public Quote() {}	
+
+	public Quote(String userName, String quote) {
+		this.userName = userName;
+		this.quote = quote;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getQuote() {
+		return quote;
+	}
+
+	public void setQuote(String quote) {
+		this.quote = quote;
 	}
 	
-	public String getSymbol() {
-		return symbol;
-	}
-	
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
-	
-	public BigDecimal getPrice() {
-		return price;
-	}
-	
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-	
-	
+
 }

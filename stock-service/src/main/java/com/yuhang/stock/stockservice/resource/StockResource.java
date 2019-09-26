@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.yuhang.stock.stockservice.models.Quote;
+import com.yuhang.stock.stockservice.models.Quotes;
 import com.yuhang.stock.stockservice.models.StockCurrentPrice;
 import com.yuhang.stock.stockservice.models.StockQuote;
 
@@ -23,8 +27,8 @@ import com.yuhang.stock.stockservice.models.StockQuote;
 @RequestMapping("/rest/stock")
 public class StockResource {
 	
-	// Note RestTemplate object is the Spring REST Client for communication with external RESTful APIs.
-	// See examples in https://www.baeldung.com/rest-template
+	// Note that we use |RestTemplate object| which is the Spring REST Client for communication with external RESTful APIs.
+	// For more details see https://www.baeldung.com/rest-template
 	@Autowired
 	RestTemplate restTemplate;
 	
@@ -55,24 +59,26 @@ public class StockResource {
 	          )
           .collect(Collectors.toList());	
 		
-	}
+	}	
 	
-
-	// Delete the specific symbol from the specific user's watch-list.
-	@CrossOrigin(origins = "http://localhost:4200")
-	@DeleteMapping("/{username}/{symbol}")
-	public void deleteSymbol (@PathVariable("username") String username, @PathVariable("symbol") String symbol) {
-		String entityUrl = "http://db-service/rest/db/" + username + "/" + symbol;
-		restTemplate.delete(entityUrl);
-	}
+	 
+	/******************************************************************
+	 * The APIs below are prepared for Angular UI in port# 4200.
+	 * Enable CORS (by Controller method CORS configuration) as below:
+	 * Include CORS access control headers in its response 
+	 * by adding a @CrossOrigin annotation to the handler method.
+	 *****************************************************************/
 	
-	// The method below is prepared for Angular UI of port# 4200.
-	// Enabling CORS by Controller method CORS configuration:
-	// Include CORS access control headers in its response 
-	// by adding a @CrossOrigin annotation to the handler method.
+	/**
+	 * API for getting real-time stock quotes in the user watch-list.
+	 * 
+	 * @param userName
+	 * @return List<StockQuote> All real-time stock quotes in the user watch-list.
+	 * 
+	 */
 	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/{username}")
-	public List<StockQuote> getStockQuotes(@PathVariable("username") final String userName){
+	public List<StockQuote> getUserStockQuotes(@PathVariable("username") final String userName){
 		
 		List<StockQuote> rst = new ArrayList<StockQuote>();
 		StockQuote s1 = new StockQuote(1, "MSFT", 138.25, 141.01, 141.65, 138.25, 32979846, -1.16);
@@ -84,6 +90,43 @@ public class StockResource {
 		rst.add(s3);
 		rst.add(s4);
 		return rst;
+	}
+	
+	
+	/**
+	 * API for adding a single stock symbol to user watch-list.
+	 * 
+	 * Note the supplied data |@RequestBody Quotes quotes| for this API 
+	 * can be directly used as argument |request| 
+	 * in method |restTemplate.postForObject(url, request, Quotes.class)|,
+	 * where |request| could alternatively be constructed directly 
+	 * as |HttpEntity<Foo> request = new HttpEntity<>(new Foo("bar"))|.
+	 * 
+	 * @param quotes
+	 * 
+	 */
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/add")
+	public void addUserSymbol (@RequestBody Quote quote) {
+		List<String> symbols = new ArrayList<String>();
+		symbols.add(quote.getQuote());
+		Quotes quotes = new Quotes(quote.getUserName(), symbols);
+		restTemplate.postForObject("http://db-service/rest/db/add", quotes, Quotes.class);
+	}
+	
+
+	/**
+	 * API for deleting a specific symbol from a specific user's watch-list.
+	 * 
+	 * @param username
+	 * @param symbol
+	 * 
+	 */
+	@CrossOrigin(origins = "http://localhost:4200")
+	@DeleteMapping("/{username}/{symbol}")
+	public void deleteUserSymbol (@PathVariable("username") String username, @PathVariable("symbol") String symbol) {
+		String entityUrl = "http://db-service/rest/db/" + username + "/" + symbol;
+		restTemplate.delete(entityUrl);
 	}
 	
 }

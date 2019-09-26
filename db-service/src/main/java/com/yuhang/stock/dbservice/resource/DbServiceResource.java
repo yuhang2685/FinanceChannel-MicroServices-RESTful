@@ -21,52 +21,65 @@ public class DbServiceResource {
 
 	private QuotesRepository quotesRepository;
 	
-	// Constructor needed for handling NullPointException?
-	// Dependency Injection.
+	// Dependency Injection. Constructor needed for handling NullPointException?
 	public DbServiceResource(QuotesRepository quotesRepository) {
 		this.quotesRepository = quotesRepository;
 	}
 	
-	// This service returns a list of stock symbols by user name.
+
+	/**
+	 * API for getting all symbols of a specific user.
+	 * @param username
+	 * @return List<String> All symbols of a specific user.
+	 * 
+	 */
 	@GetMapping("/{username}")	
-	public List<String> getQuotes(@PathVariable("username") final String username){
-		
-		return getQuotesByUserName(username);
+	public List<String> getUserAllSymbols(@PathVariable("username") final String username){		
+		return getUserSymbols(username);
 	}
 	
-	
-	// Input is a Quotes object which is comprised of a username and a list of symbols.
-	// For each symbol, it constructs a Quote object using username and the symbol,
-	// and then save each above constructed Quote object in DB.
-	// Then it returns the list of symbols for the specified user.
+
+	/**
+	 * API for adding multiple symbols for a specific user.
+	 * Note since it is an API for POST, it is better to accept an entity wrapping all necessary data, like "Quotes".
+	 * @param quotes
+	 * @returnList<String> All symbols of a specific user.
+	 *  
+	 */
     @PostMapping("/add")
     public List<String> add(@RequestBody final Quotes quotes) {
-
         quotes.getQuotes()
                 .stream()
                 .map(quote -> new Quote(quotes.getUserName(), quote))
                 .forEach(quote -> quotesRepository.save(quote));
-        return getQuotesByUserName(quotes.getUserName());
+        return getUserSymbols(quotes.getUserName());
     }
 
 
-    // First, JPA gets from DB the list of Quote objects where each one has its field username matched with the given username.
-    // Then, JPA deletes every Quote object in the list from DB.
-    // Finally, it should return the list of (expected to be empty) Quote objects having username matched with the given username.
+   /**
+     * API for deleting all symbols of a specific user.
+     * @param username
+     * @return List<String> All symbols of a specific user (expected to be empty).
+     * 
+     */
     @PostMapping("/delete/{username}")
-    public List<String> delete(@PathVariable("username") final String username) {
-
+    public List<String> deleteAllSymbolsOfUser(@PathVariable("username") final String username) {
         List<Quote> quotes = quotesRepository.findByUserName(username);        
         quotes.stream().forEach(quote -> quotesRepository.delete(quote));               
-        return getQuotesByUserName(username);
-    }		
+        return getUserSymbols(username);
+    }
 
-    // First, JPA gets from DB the list of Quote objects where each one has its field username matched with the given username.
-    // Then, it returns a list of symbols by putting together the symbol field of each Quote object.
-    private List<String> getQuotesByUserName(@PathVariable("username") String username) {
+    
+    /**
+     * Function to obtain all symbols of a specific user.
+     * @param username
+     * @return List<String> All symbols of a specific user.
+     * 
+     */
+    private List<String> getUserSymbols(@PathVariable("username") String username) {
         return quotesRepository.findByUserName(username)
         		.stream()
-				//.map(Quote::getQuote)
+				//Alternatively use .map(Quote::getQuote)
 				.map(quote -> {
 					return quote.getQuote();					
 				})
@@ -74,20 +87,29 @@ public class DbServiceResource {
     }
 
     
-    // First, JPA gets from DB the list of Quote objects where each one has the specified username and symbol.
-    // Then, JPA deletes every Quote object in the list from DB.
-    // Finally, it returns the list of (expected to be empty) Quote objects having the specific username and symbol.
+    /**
+     * API for deleting a specific symbol of a specific user.
+     * @param username
+     * @param symbol
+     * @return List<Quote> All data records for the specific user and symbol (expected to be empty).
+     * 
+     */
     @DeleteMapping("/{username}/{symbol}")
-    public List<Quote> deleteSymbol(@PathVariable("username") String username, @PathVariable("symbol") String symbol) {
-
-        List<Quote> quotes = getQuoteByUserNameAndSymbol(username, symbol);        
+    public List<Quote> deleteUserSymbol(@PathVariable("username") String username, @PathVariable("symbol") String symbol) {
+        List<Quote> quotes = getQuotesUserAndSymbol(username, symbol);        
         quotes.stream().forEach(quote -> quotesRepository.delete(quote));                
-        return getQuoteByUserNameAndSymbol(username, symbol);
+        return getQuotesUserAndSymbol(username, symbol);
     }	
     
-    // Obtain the list of records where each has the specific username and symbol.
-    //@GetMapping("/{username}/{symbol}")	
-    public List<Quote> getQuoteByUserNameAndSymbol (String username, String symbol) {
+
+    /**
+     * Function to obtain data records for the specific user and symbol.
+     * @param username
+     * @param symbol
+     * @return List<Quote> All data records for the specific user and symbol.
+     * 
+     */
+    public List<Quote> getQuotesUserAndSymbol (String username, String symbol) {
 		return quotesRepository.findByUserNameAndSymbol(username, symbol);
 	}
 	
