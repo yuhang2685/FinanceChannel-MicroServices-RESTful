@@ -2,24 +2,24 @@
 Author: Dr. YUHANG ZHAO
 
 ## Overview
-The finance web service retrieves and process real-time finance data from Alpha Vantage.
+The finance web service manages user watchlist and processes real-time finance market data retrieved from Alpha Vantage.
 
 ## Features
-- User watchlist are maintained
-- JPA / Hibernate for automatically maintaining data
-- Individual services are implemented as Microservice
-- RESTful APIs for data communication between services
-- Eureka for microservice registration
+- User watchlists are maintained in DB
+- JPA / Hibernate for data management
+- Microservice architecture
+- RESTful APIs for data communication among internal microservices and with external web services / UI
+- Eureka service registry to hide back-end microservices from external requests
 - Powered by Spring Boot
 
 ## Architecture
-- Alphavantege-API-client: The microservice to retrieve and process real-time finance data from Alpha Vantage
-- db-service: The microservice to maintain MySQL DB through JPA/Hibernate
-- stock-service: The microservice exposure to external requests 
-- eureka-service: Manage microservices
+- Alphavantege-API-client: The microservice is a java library to process real-time finance data retrieved from Alpha Vantage
+- DB Service: The microservice to maintain user watchlists in MySQL DB through JPA/Hibernate
+- Stock Service: The microservice exposed to the external requests
+- Eureka Service: The service registry
 
 ## Related Projects
-Front-end resides at [Stock-WatchList-Angular](https://github.com/yuhang2685/Stock-WatchList-Angular)
+Web UI resides at [Stock-WatchList-Angular](https://github.com/yuhang2685/Stock-WatchList-Angular)
 
 ## Environment
 - Java 1.8
