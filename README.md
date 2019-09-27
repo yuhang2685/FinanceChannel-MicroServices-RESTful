@@ -13,16 +13,16 @@ The finance web service retrieves and process real-time finance data from Alpha 
 - Powered by Spring Boot
 
 ## Architecture
-Alphavantege-API-client: The microservice to retrieve and process real-time finance data from Alpha Vantage
-db-service: The microservice to maintain MySQL DB through JPA/Hibernate
-stock-service: The microservice exposure to external requests 
-eureka-service: Manage microservices
+- Alphavantege-API-client: The microservice to retrieve and process real-time finance data from Alpha Vantage
+- db-service: The microservice to maintain MySQL DB through JPA/Hibernate
+- stock-service: The microservice exposure to external requests 
+- eureka-service: Manage microservices
 
 ## Related Projects
 Front-end resides at [Stock-WatchList-Angular](https://github.com/yuhang2685/Stock-WatchList-Angular)
 
 ## Environment
-Java 1.8
-Spring Boot v2.1.7.RELEASE
-MySQL 8.0
-spring-cloud Greenwich.SR2
+- Java 1.8
+- Spring Boot v2.1.7.RELEASE
+- MySQL 8.0
+- spring-cloud Greenwich.SR2
