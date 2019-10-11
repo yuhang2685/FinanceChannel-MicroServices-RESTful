@@ -1,28 +1,35 @@
-# Stock-Price-Viewer-Microservices
+## Stock-Price-Viewer-Microservices
 Author: Dr. YUHANG ZHAO
 
-## Overview
-The finance web service manages user watchlist and processes real-time finance market data retrieved from Alpha Vantage.
+[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
+[![Open Source Love svg3](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
-## Features
-- User watchlists are maintained in DB
-- JPA / Hibernate for data management
-- Microservice architecture
-- RESTful APIs for data communication among internal microservices and with external web services / UI
-- Eureka service registry to hide back-end microservices from external requests
-- Powered by Spring Boot
+### Overview
+The finance web service manages user watchlist and processes real-time finance market data retrieved from "Alpha Vantage".
 
-## Architecture
-- Alphavantege-API-client: The microservice is a java library to process real-time finance data retrieved from Alpha Vantage
-- DB Service: The microservice to maintain user watchlists in MySQL DB through JPA/Hibernate
-- Stock Service: The microservice exposed to the external requests
-- Eureka Service: The service registry
+### Features
+- User watchlists are maintained in `MySQL DB`
+- `JPA / Hibernate` for data management
+- `Microservice` architecture
+- `RESTful APIs` for data communication among internal microservices and with external web services / UI
+- `Eureka service registry` to hide back-end microservices from external requests
+- Powered by `Spring Boot`
 
-## Related Projects
+### Architecture
+![Architecture](https://github.com/yuhang2685/Stock-Price-Viewer-Microservices/blob/master/SystemArchitecture.jpg)
+- `Alphavantege-API-client`: The microservice to process real-time finance data retrieved from Alpha Vantage
+- `DB Service`: The microservice to maintain user watchlists in MySQL DB through JPA/Hibernate
+- `Stock Service`: The microservice exposed to the external requests
+- `Eureka Service`: The service registry
+
+### Related Projects
 Web UI resides at [Stock-WatchList-Angular](https://github.com/yuhang2685/Stock-WatchList-Angular)
 
-## Environment
+### Environment
 - Java 1.8
 - Spring Boot v2.1.7.RELEASE
 - MySQL 8.0
 - spring-cloud Greenwich.SR2
+
+### License
+[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
